@@ -1,0 +1,66 @@
+<!--
+This file is part of the BBx-Kitchen/bbx-linear-gauge
+(c) Basis Europe <eu@basis.com>
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+## BBX Linear-gauge
+
+Simple Polymer hybrid element to create linear gauge
+
+### Example
+
+```html
+<bbx-linear-gauge></bbx-linear-gauge>
+```
+### Styling
+`<bbx-linear-gauge>` provides the following custom properties and mixins
+for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--bbx-linear-gauge` | bbx-linear-gauge Mixin | {}
+
+@group BBx Kitchen
+@element bbx-linear-gauge
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="bbx-linear-gauge">
+  <template>
+
+    <style>
+       :host {
+        display: block;
+      }
+
+    </style>
+
+    <h2>Hello [[prop1]]</h2>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'bbx-linear-gauge',
+      properties: {
+
+        /**
+        * Prop
+        *
+        * @type {String}
+        */
+        prop1: {
+          type: String,
+          value: 'bbx-linear-gauge',
+        },
+      },
+
+    });
+
+  </script>
+</dom-module>

@@ -1,0 +1,38 @@
+<!doctype html>
+<!--
+This file is part of the BBx-Kitchen/bbx-linear-gauge
+(c) Basis Europe <eu@basis.com>
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+-->
+
+<html>
+<head>
+  <title>BBX Linear-gauge Test</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../bbx-linear-gauge.html">
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <bbx-linear-gauge></bbx-linear-gauge>
+    </template>
+  </test-fixture>
+
+  <script>
+  suite('basic', function() {
+
+    test('instantiating the element works', function() {
+      var element = fixture('basic');
+      assert.equal(element.is, 'bbx-linear-gauge');
+    });
+
+  });
+  </script>
+</body>
+</html>

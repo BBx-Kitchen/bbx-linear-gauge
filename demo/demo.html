@@ -1,0 +1,83 @@
+<!--
+This file is part of the BBx-Kitchen/bbx-linear-gauge
+(c) Basis Europe <eu@basis.com>
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+-->
+
+
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-material/paper-material.html">
+<link rel="import" href="../../paper-slider/paper-slider.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bbx-linear-gauge.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+
+<dom-module id="linear-gauge-demo">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+       :host {
+        display: block;
+      }
+
+      h2 {
+        padding: 20px;
+        background: rgba(204, 204, 204, 0.24);
+      }
+
+      paper-material {
+        background: #fff;
+        margin-bottom: 30px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+    </style>
+
+    <div class="layout horizontal">
+      <div class="flex">
+        <h1>Linear Gauge Demo</h1>
+      </div>
+      <div>
+        <paper-input value="{{value}}" type="number" label="Value" min="0" max="100"></paper-input>
+      </div>
+    </div>
+
+    <paper-material>
+      <h2>Horizontal Gauge - Top</h2>
+      <div class="content">
+        <bbx-linear-gauge value="{{value}}" position="top" gradients='[[0,"#A770EF"],[50,"#CF8BF3"],[100,"#FDB99B"]]'>
+        </bbx-linear-gauge>
+      </div>
+    </paper-material>
+
+    <paper-material>
+      <h2>Horizontal Gauge - Bottom</h2>
+      <div class="content">
+        <bbx-linear-gauge value="{{value}}" position="bottom" gradients="{{gradients}}">
+        </bbx-linear-gauge>
+      </div>
+    </paper-material>
+  </template>
+  <script>
+    Polymer({
+      is: 'linear-gauge-demo',
+      properties: {
+        gradients: {
+          type: Array,
+          value: [
+            [0, '#A770EF'],
+            [50, '#CF8BF3'],
+            [100, '#FDB99B']
+          ]
+        },
+        value: {
+          type: Number,
+          value: 50
+        }
+      }
+    });
+  </script>
+</dom-module>

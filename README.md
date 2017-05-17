@@ -1,15 +1,16 @@
 # BBX Linear-gauge
 
-Simple Polymer hybrid element to create linear gauge
+Simple Polymer element to create linear gauge
 
 ## How to install
 
-`bower install --save http://git.storesandbox.de/hyyan/bbx-linear-gauge.git`
+`bower install --save BBx-Kitchen/bbx-linear-gauge`
 
 ## Usage
 
 ```html
-<bbx-linear-gauge></bbx-linear-gauge>
+<bbx-linear-gauge min="0" max="" value="{{value}}" position="top" gradients='[[0,"#A770EF"],[50,"#CF8BF3"],[100,"#FDB99B"]]'>
+</bbx-linear-gauge>
 ```
 
 ## Viewing Element
@@ -37,10 +38,4 @@ ways you can contribute:
 * Reporting issues (please read [issue guidelines](https://github.com/necolas/issue-guidelines))
 * Suggesting new features
 * Writing or refactoring code
-* Fixing [issues](http://git.storesandbox.de/hyyan/bbx-linear-gauge/issues)
-
-# Changelog
-
-## v0.1.0 - 15/5/2017
-
-* initial commit
+* Fixing [issues](https://github.com/BBx-Kitchen/bbx-linear-gauge/issues)

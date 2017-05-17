@@ -18,20 +18,24 @@ file that was distributed with this source code.
 </head>
 <body>
 
-  <test-fixture id="basic">
+  <test-fixture id="linear-gauge">
     <template>
       <bbx-linear-gauge></bbx-linear-gauge>
     </template>
   </test-fixture>
 
   <script>
-  suite('basic', function() {
+  suite('linear-gauge', function() {
 
-    test('instantiating the element works', function() {
-      var element = fixture('basic');
-      assert.equal(element.is, 'bbx-linear-gauge');
+    var element;
+
+    setup(function(){
+      element = fixture('linear-gauge');
     });
 
+    test('instantiating the element works', function() {
+      assert.equal(element.is, 'bbx-linear-gauge');
+    });
   });
   </script>
 </body>

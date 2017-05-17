@@ -7,30 +7,28 @@ file that was distributed with this source code.
 -->
 
 <html>
-<head>
-  <title>BBX Linear-gauge Demo</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <head>
+    <title>BBX Linear-gauge Demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-  <link rel="import" href="../bbx-linear-gauge.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
-  <style is="custom-style" include="demo-pages-shared-styles">
-  </style>
-</head>
-<body>
+    <link rel="import" href="demo.html">
 
-  <div class="vertical-section-container centered">
-    <h1>Basic BBX Linear-gauge Demo</h1>
-    <demo-snippet>
-      <template>
-        <bbx-linear-gauge></bbx-linear-gauge>
-      </template>
-    </demo-snippet>
-  </div>
+    <style is="custom-style" include="demo-pages-shared-styles">
+      body {
+        margin: 10px auto;
+        width: 600px;
+      }
+    </style>
+  </head>
 
-</body>
+  <body>
+    <linear-gauge-demo></linear-gauge-demo>
+  </body>
+
 </html>

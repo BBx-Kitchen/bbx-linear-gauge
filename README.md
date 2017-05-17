@@ -32,7 +32,7 @@ _[Demo and API docs](https://bbx-kitchen.github.io/bbx-linear-gauge/components/b
 </bbx-linear-gauge>
 
 <h3>Horizontal Gauge - Bottom</h3>
-<bbx-linear-gauge min="0" max="100" value="50" position="top" gradients='[[0,"#A770EF"],[50,"#CF8BF3"],[100,"#FDB99B"]]'>
+<bbx-linear-gauge min="0" max="100" value="50" position="bottom" gradients='[[0,"#A770EF"],[50,"#CF8BF3"],[100,"#FDB99B"]]'>
 </bbx-linear-gauge>
 ```
 

@@ -69,7 +69,7 @@ Simple Polymer hybrid element to create linear gauge
         */
         min: {
           type: Number,
-          value: 0
+          value:0
         },
 
         /**
@@ -200,7 +200,7 @@ Simple Polymer hybrid element to create linear gauge
         theme: {
           type: Object,
           value: {
-            'padding': 20,
+            'padding': 50,
             'indicator': {
               'stroke': 'white',
               'fill': 'white',
@@ -218,7 +218,7 @@ Simple Polymer hybrid element to create linear gauge
               'fill': 'white',
               'blur': 7,
               'shadow': 'rgba(0, 0, 0, .5)',
-              'radius': 12
+              'radius': 7
             }
           }
         },
@@ -230,7 +230,7 @@ Simple Polymer hybrid element to create linear gauge
         */
         scaleFactor: {
           type: Number,
-          value: 1
+          value: 0
         }
       },
 
@@ -249,19 +249,15 @@ Simple Polymer hybrid element to create linear gauge
       * Convert the given value from from the choosen scale to the new scale
       * 
       * @param {Number} value value on the old scale
-      * @param {Number} max max value of the new scale
-      * @param {Number} min min value of the new scale
-      * 
+      * @param {Array} from from range array
+      * @param {Array} to range array
+
       * @return {Number} the value on the new scale
       */
-      _scale: function (value, max, min) {
+      _scale: function (value, from , to) {
 
-        var oldRange = (this.max - this.min) + this.theme.padding;
-        var newRange = (max - min);
-
-        var result = (((value - this.min) * newRange) / oldRange) + min;
-
-        return Math.abs(result);
+        percent = (value - from[0]) / (from[1] - from[0]);
+        return percent * (to[1] - to[0]) + to[0];
       },
 
       /**
@@ -296,7 +292,7 @@ Simple Polymer hybrid element to create linear gauge
         if (this.gradients) {
           this.gradients.forEach(function (val, key) {
             gradient.addColorStop(
-              this._scale(val[0] + (this.theme.padding / 2), 1, 0), // value
+              this._scale(val[0], [this.min,this.max] , [0,1]), // value
               val[1] // color
             );
           }, this);
@@ -323,10 +319,12 @@ Simple Polymer hybrid element to create linear gauge
         var scaledValue;
         var factor = parseInt(ctx.font) / 2;
 
-        scaledValue = this._scale(this.value, canvas.width, 0) + this.theme.padding * 2;
-        scaledValue += ctx.measureText(Math.floor(this.max)).width / 4;
-
-        console.log(this.position);
+        scaledValue = this._scale(
+          this.value,
+          [this.max, this.min],
+          [canvas.width - (this.theme.padding / 2), (this.theme.padding / 2)]
+        );
+        
         if ('top' === this.position) {
           ctx.moveTo(scaledValue, factor);
           ctx.lineTo(scaledValue - factor, 0);
@@ -350,22 +348,22 @@ Simple Polymer hybrid element to create linear gauge
 
         var fontHeight = parseInt(ctx.font);
         var factor = parseInt(ctx.font);
-        var r = this.theme.value.radius;
+        var r = (this.theme.value.radius ) + (factor / 2) ;
         var x;
         var y;
 
         ctx.beginPath();
 
         x = this._scale(
-          this.value, canvas.width + (this.scaleFactor / 2), 0
-        ) + this.theme.padding * 2;
-
-        x += ctx.measureText(Math.floor(this.max)).width / 4;
+          this.value,
+          [this.max, this.min],
+          [canvas.width - (this.theme.padding / 2), (this.theme.padding / 2)]
+        );
 
         if ('top' === this.position) {
-          y = (r * 2) + factor * 1.5;
+          y = (r * 2) + factor;
         } else {
-          y = canvas.height - ((r * 2) + factor * 1.5);
+          y = canvas.height - ((r * 2) + factor);
         }
 
         ctx.save();
@@ -396,30 +394,31 @@ Simple Polymer hybrid element to create linear gauge
         ctx.shadowColor = this.theme.steps.shadow;
         ctx.fillStyle = this.theme.steps.stroke;
 
-        var factor = this.scaleFactor;
         var fontHeight = parseInt(ctx.font);
         var fontWidth;
         var scaledValue;
         var y;
         var x;
 
-        x = canvas.width;
         if ('top' === this.position) {
-          y = fontHeight + factor;
+          y = fontHeight * 1.6;
         } else {
-          y = canvas.height - factor;
-          fontHeight = - fontHeight;
+          y = canvas.height - ((fontHeight * 1.6) - fontHeight);
         }
 
         for (var i = this.min; i <= this.max; i += this.step) {
 
           fontWidth = ctx.measureText(i).width;
+          scaledValue = this._scale(
+            i,
+            [this.max,this.min],
+            [canvas.width - this.theme.padding , 0]
+          );
 
-          // if (i === Number(this.value)) continue
           ctx.fillText(
             i,
-            this._scale(i + (this.theme.padding / 2), x, 0) - (fontWidth / 2),
-            y + fontHeight
+            (scaledValue + (this.theme.padding / 2)) - (fontWidth / 2),
+            y
           );
         }
       },

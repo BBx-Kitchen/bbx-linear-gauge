@@ -69,7 +69,7 @@ Simple Polymer hybrid element to create linear gauge
         */
         min: {
           type: Number,
-          value:0
+          value: 0
         },
 
         /**
@@ -255,9 +255,9 @@ Simple Polymer hybrid element to create linear gauge
       * @return {Number} the value on the new scale
       */
       _scale: function (value, from , to) {
-
-        percent = (value - from[0]) / (from[1] - from[0]);
-        return percent * (to[1] - to[0]) + to[0];
+        
+        percent = (Math.abs(value) - Math.abs(from[0])) / (Math.abs(from[1]) - Math.abs(from[0]));
+        return percent * (Math.abs(to[1]) - Math.abs(to[0])) + Math.abs(to[0]);
       },
 
       /**
@@ -407,16 +407,16 @@ Simple Polymer hybrid element to create linear gauge
         }
 
         for (var i = this.min; i <= this.max; i += this.step) {
-
-          fontWidth = ctx.measureText(i).width;
+          
+          fontWidth = ctx.measureText(Math.abs(i)).width;
           scaledValue = this._scale(
-            i,
+            Math.abs(i),
             [this.max,this.min],
             [canvas.width - this.theme.padding , 0]
           );
 
           ctx.fillText(
-            i,
+            Math.abs(i),
             (scaledValue + (this.theme.padding / 2)) - (fontWidth / 2),
             y
           );

@@ -39,3 +39,24 @@ ways you can contribute:
 * Suggesting new features
 * Writing or refactoring code
 * Fixing [issues](https://github.com/BBx-Kitchen/bbx-linear-gauge/issues)
+
+
+<!---
+```
+<custom-element-demo>
+  <template>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="bbx-linear-gauge.html">
+    <next-code-block></next-code-block>
+  </template>
+</custom-element-demo>
+```
+-->
+```html
+<h3>Horizontal Gauge - Top</h3>
+<bbx-linear-gauge min="0" max="100" value="50" position="top" gradients='[[0,"#A770EF"],[50,"#CF8BF3"],[100,"#FDB99B"]]'>
+</bbx-linear-gauge>
+<h3>Horizontal Gauge - Bottom</h3>
+<bbx-linear-gauge min="0" max="100" value="50" position="top" gradients='[[0,"#A770EF"],[50,"#CF8BF3"],[100,"#FDB99B"]]'>
+</bbx-linear-gauge>
+```

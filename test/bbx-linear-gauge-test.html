@@ -36,6 +36,12 @@ file that was distributed with this source code.
     test('instantiating the element works', function() {
       assert.equal(element.is, 'bbx-linear-gauge');
     });
+
+    test('_scale can convert between ranges', function(){
+      
+      assert.equal(element._scale(50,[0,100],[0,1]), .5);
+      assert.equal(element._scale(4, [0,10], [0, 1000]), 400);
+    });
   });
   </script>
 </body>

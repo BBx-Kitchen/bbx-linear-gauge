@@ -329,6 +329,7 @@ Simple Polymer hybrid element to create linear gauge
         scaledValue = this._scale(this.value, canvas.width, 0) + this.theme.padding * 2;
         scaledValue += ctx.measureText(Math.floor(this.max)).width / 4;
 
+        console.log(this.position);
         if ('top' === this.position) {
           ctx.moveTo(scaledValue, factor);
           ctx.lineTo(scaledValue - factor, 0);
@@ -441,10 +442,6 @@ Simple Polymer hybrid element to create linear gauge
         ctx.save();
         ctx.clearRect(0, 0, c.width, c.height);
         ctx.font = this.scaleFactor + 12 + "px Arial";
-
-        if (!('top' === position || 'bottom' === position)) {
-          this.position = 'top';
-        }
 
         this.value = value < this.min ? 0 : (value > this.max) ? this.max : value;
 

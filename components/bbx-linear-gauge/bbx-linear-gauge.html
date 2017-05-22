@@ -1,0 +1,452 @@
+<!--
+This file is part of the BBx-Kitchen/bbx-linear-gauge
+(c) Basis Europe <eu@basis.com>
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="../paper-styles/shadow.html">
+
+<!--
+## BBX Linear-gauge
+
+Simple Polymer hybrid element to create linear gauge
+
+### Example
+
+```html
+<bbx-linear-gauge min="0" max="100" value="{{value}}" position="top" gradients='[[0,"#A770EF"],[50,"#CF8BF3"],[100,"#FDB99B"]]'>
+</bbx-linear-gauge>
+```
+
+@demo demo/index.html
+-->
+
+<dom-module id="bbx-linear-gauge">
+  <template>
+
+    <style>
+       :host {
+        display: inline-block;
+        transition: all 360ms;
+      }
+
+      .container {
+        position: relative;
+        width: inherit;
+        height: inherit;
+      }
+
+      #canvas {
+        border-radius: 3px;
+        @apply(--shadow-elevation-2dp);
+      }
+
+    </style>
+
+    <div class="container">
+      <canvas id="canvas"></canvas>
+      <paper-ripple hidden="{{!ripple}}"></paper-ripple>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'bbx-linear-gauge',
+      behaviors: [Polymer.IronResizableBehavior],
+      properties: {
+
+        /**
+        * Min 
+        * 
+        * The min value for the this._scale
+        *
+        * @type {Number}
+        */
+        min: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Max 
+        * 
+        * The max value for the this._scale
+        *
+        * @type {Number}
+        */
+        max: {
+          type: Number,
+          value: 100
+        },
+
+        /**
+        * value
+        * 
+        * The current selected value on the current this._scale
+        * 
+        * @type {Number}
+        */
+        value: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+        * Step
+        * 
+        * Show marks on given step number
+        * 
+        * @type {Number}
+        */
+        step: {
+          type: Number,
+          value: 20
+        },
+
+        /**
+        * Gradients
+        * 
+        * Array of gradients to draw on the guage
+        * Every gradient contains a value and color in the 
+        * form of array 
+        * 
+        * @type {Array.<Array>} @Example [30, 'red']
+        */
+        gradients: {
+          type: Array,
+          value: []
+        },
+
+        /**
+        * Width 
+        * 
+        * @type {String} 
+        */
+        width: {
+          type: String,
+          value: '100%'
+        },
+
+        /**
+        * Height 
+        * 
+        * @type {String}
+        */
+        height: {
+          type: String,
+          value: '60px'
+        },
+
+        /**
+        * Indicator position
+        * 
+        * Defiens the poistion of value's indicator , possible values are : top|bottom
+        *
+        * @type {String}
+        */
+        position: {
+          type: String,
+          value: 'top'
+        },
+
+        /**
+        * Ripple 
+        * 
+        * Should activate ripple effect
+        *
+        * @type {Boolean}
+        */
+        ripple: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+        * theme
+        * 
+        * Guage theme
+        * 
+        * @type {Object}
+        */
+        theme: {
+          type: Object,
+          value: {
+            'padding': 50,
+            'indicator': {
+              'stroke': 'white',
+              'fill': 'white',
+              'blur': 7,
+              'shadow': 'rgba(0,0,0,.5)',
+              'strokeWidth': 1,
+            },
+            'steps': {
+              'stroke': 'white',
+              'blur': 7,
+              'shadow': 'rgba(0, 0, 0, .5)'
+            },
+            'value': {
+              'stroke': 'rgba(0,0,0,.5)',
+              'fill': 'white',
+              'blur': 7,
+              'shadow': 'rgba(0, 0, 0, .5)',
+              'radius': 7
+            }
+          }
+        },
+
+        /**
+        * Scale Factor 
+        * 
+        * @type {Number}
+        */
+        scaleFactor: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      listeners: {
+        'iron-resize': '_onIronResizeListener'
+      },
+
+      observers: [
+        '_changed(value, min, max, align,step, position,gradients,theme,scaleFactor,gradients.*,theme.*)',
+        '_dimensionChanged(width,height)'
+      ],
+
+      /**
+      * Scale 
+      * 
+      * Convert the given value from from the choosen scale to the new scale
+      * 
+      * @param {Number} value value on the old scale
+      * @param {Array} from from range array
+      * @param {Array} to range array
+
+      * @return {Number} the value on the new scale
+      */
+      _scale: function (value, from , to) {
+        
+        percent = (Math.abs(value) - Math.abs(from[0])) / (Math.abs(from[1]) - Math.abs(from[0]));
+        return percent * (Math.abs(to[1]) - Math.abs(to[0])) + Math.abs(to[0]);
+      },
+
+      /**
+      * Resize
+      * 
+      * Re-caculate the element width and height and force the Redraw
+      */
+      _resize: function () {
+
+        this._width = this.offsetWidth;
+        this._height = this.offsetHeight;
+
+        this._changed(
+          this.value,
+          this.min,
+          this.max,
+          this.align,
+          this.step,
+          this.position,
+          this.gradients,
+          this.theme
+        );
+      },
+
+      _drawGradients: function (canvas) {
+
+        var gradient;
+        var ctx = canvas.getContext("2d");
+
+        gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+
+        if (this.gradients) {
+          this.gradients.forEach(function (val, key) {
+            gradient.addColorStop(
+              this._scale(val[0], [this.min,this.max] , [0,1]), // value
+              val[1] // color
+            );
+          }, this);
+
+          ctx.fillStyle = gradient;
+
+          // create the gradient
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      },
+
+      _drawValueIndicator: function (canvas) {
+
+        var ctx = canvas.getContext("2d");
+
+        ctx.shadowBlur = this.theme.indicator.blur;
+        ctx.shadowColor = this.theme.indicator.shadow;
+        ctx.fillStyle = this.theme.indicator.fill;
+        ctx.strokeStyle = this.theme.indicator.stroke;
+        ctx.lineWidth = this.theme.indicator.strokeWidth;
+
+        ctx.beginPath();
+
+        var scaledValue;
+        var factor = parseInt(ctx.font) / 2;
+
+        scaledValue = this._scale(
+          this.value,
+          [this.max, this.min],
+          [canvas.width - (this.theme.padding / 2), (this.theme.padding / 2)]
+        );
+        
+        if ('top' === this.position) {
+          ctx.moveTo(scaledValue, factor);
+          ctx.lineTo(scaledValue - factor, 0);
+          ctx.lineTo(scaledValue + factor, 0);
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          ctx.moveTo(scaledValue, (canvas.height - factor));
+          ctx.lineTo(scaledValue - factor, canvas.height);
+          ctx.lineTo(scaledValue + factor, canvas.height);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        ctx.stroke();
+      },
+
+      _drawValueCircle: function (canvas) {
+
+        var ctx = canvas.getContext("2d");
+
+        var fontHeight = parseInt(ctx.font);
+        var factor = parseInt(ctx.font);
+        var r = (this.theme.value.radius ) + (factor / 2) ;
+        var x;
+        var y;
+
+        ctx.beginPath();
+
+        x = this._scale(
+          this.value,
+          [this.max, this.min],
+          [canvas.width - (this.theme.padding / 2), (this.theme.padding / 2)]
+        );
+
+        if ('top' === this.position) {
+          y = (r * 2) + factor;
+        } else {
+          y = canvas.height - ((r * 2) + factor);
+        }
+
+        ctx.save();
+        ctx.shadowBlur = this.theme.value.blur;
+        ctx.shadowColor = this.theme.value.shadow;
+        ctx.fillStyle = this.theme.value.fill;
+        ctx.lineWidth = this.theme.value.strokeWidth;
+        ctx.strokeStyle = this.theme.value.fill;
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.restore();
+        ctx.fillStyle = this.theme.value.stroke;
+        var fontWidth = ctx.measureText(Math.abs(this.value)).width;
+        ctx.fillText(
+          Math.abs(this.value),
+          x - (fontWidth / 2),
+          y + (fontHeight / 2) - 2
+        );
+
+        ctx.stroke();
+      },
+
+      _drawSteps: function (canvas, theme) {
+
+        var ctx = canvas.getContext("2d");
+        ctx.shadowBlur = this.theme.steps.blur;
+        ctx.shadowColor = this.theme.steps.shadow;
+        ctx.fillStyle = this.theme.steps.stroke;
+
+        var fontHeight = parseInt(ctx.font);
+        var fontWidth;
+        var scaledValue;
+        var y;
+        var x;
+
+        if ('top' === this.position) {
+          y = fontHeight * 1.6;
+        } else {
+          y = canvas.height - ((fontHeight * 1.6) - fontHeight);
+        }
+
+        for (var i = this.min; i <= this.max; i += this.step) {
+          
+          fontWidth = ctx.measureText(Math.abs(i)).width;
+          scaledValue = this._scale(
+            Math.abs(i),
+            [this.max,this.min],
+            [canvas.width - this.theme.padding , 0]
+          );
+
+          ctx.fillText(
+            Math.abs(i),
+            (scaledValue + (this.theme.padding / 2)) - (fontWidth / 2),
+            y
+          );
+        }
+      },
+
+      _changed: function (value, min, max, step, position, gradients, theme) {
+
+        // we need the element dimension in order to continue
+        if (!this._width || !this._height) return;
+
+        if (!(min || max)) return false;
+
+        var c = this.$.canvas;
+        c.width = this._width;
+        c.height = this._height;
+
+        var ctx = c.getContext("2d");
+        ctx.save();
+        ctx.clearRect(0, 0, c.width, c.height);
+        ctx.font = this.scaleFactor + 12 + "px Arial";
+
+        this.value = value < this.min ? 0 : (value > this.max) ? this.max : value;
+
+        this._drawGradients(c);
+        this._drawValueIndicator(c);
+        this._drawValueCircle(c);
+        this._drawSteps(c);
+      },
+
+      /**
+      * Dimension Changed
+      * 
+      * Redraw the gauge every time the element dimension is changed
+      * 
+      * @param {String} width 
+      * @param {String} height
+      */
+      _dimensionChanged: function (width, height) {
+
+        if (width) this.style.width = width;
+        if (height) this.style.height = height;
+
+        this._resize();
+      },
+
+      /**
+      * On Iron Resize Listener
+      * 
+      * Redraw the gauge every time parent dimension is changed
+      */
+      _onIronResizeListener: function () {
+        this._resize();
+      },
+    });
+  </script>
+</dom-module>
